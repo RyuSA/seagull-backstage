@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: seagull-family
+  description: A collection of all entities
+spec:
+  type: url
+  targets:
+    - https://github.com/RyuSA/seagull-backstage/catalog-info.yaml
+    - https://github.com/RyuSA/x-ctf/blob/main/catalog-info.yaml

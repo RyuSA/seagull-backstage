@@ -30,10 +30,19 @@ backend:
 
 auth:
   providers:
-    guest: null
+    guest:
+      dangerouslyAllowOutsideDevelopment: true # TODO change the provider
 
 catalog:
+  processingInterval: { minutes: 5 }
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules: 
+    - allow: [Component, Group, User, Resource, Location, Template, System]
   # Overrides the default list locations from app-config.yaml as these contain example data.
   # See https://backstage.io/docs/features/software-catalog/#adding-components-to-the-catalog for more details
   # on how to get entities into the catalog.
-  locations: []
+  locations:
+    - type: url
+      target: https://github.com/RyuSA/seagull-backstage/catalogs/lookup.yaml
