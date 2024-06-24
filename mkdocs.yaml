@@ -1,0 +1,6 @@
+site_name: 'Seagull - Backstage'
+repo_url: https://github.com/RyuSA/seagull-backstage
+edit_uri: edit/main/docs
+
+plugins:
+  - techdocs-core
