@@ -97,3 +97,5 @@ catalog:
 
     - type: url
       target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+    - type: url
+      target: https://github.com/RyuSA/seagull-backstage/blob/main/catalogs/lookup.yaml
