@@ -3,7 +3,13 @@ variable "project_id" {
   description = "GCP project ID"
 }
 
-variable "terraform_butcket" {
-  type = string
-  description = "terraform state"
+variable "region" {
+  type        = string
+  description = "region"
+}
+
+variable "auth_proxy_password" {
+  type        = string
+  description = "password for cloud sql"
+  sensitive   = true
 }
