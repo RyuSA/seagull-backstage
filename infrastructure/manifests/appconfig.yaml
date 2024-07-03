@@ -1,0 +1,43 @@
+apiVersion: v1
+data:
+  app-config.production.yaml: |
+    app:
+      baseUrl: http://localhost:7007
+
+    backend:
+      baseUrl: http://localhost:7007
+      listen: ':7007'
+
+      database:
+        client: pg
+        connection:
+          host: ${POSTGRES_HOST}
+          port: ${POSTGRES_PORT}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+
+    auth:
+      providers:
+        guest:
+          dangerouslyAllowOutsideDevelopment: true # TODO change the provider
+
+    catalog:
+      processingInterval: { minutes: 5 }
+      import:
+        entityFilename: catalog-info.yaml
+        pullRequestBranchName: backstage-integration
+      rules: 
+        - allow: [Component, Group, User, Resource, Location, Template, System]
+      locations:
+        - type: url
+          target: https://github.com/RyuSA/seagull-backstage/blob/main/catalogs/lookup.yaml
+
+    techdocs:
+      builder: 'external'
+      publisher:
+        type: 'googleGcs'
+        googleGcs:
+          bucketName: ${BUTCKET_NAME}
+kind: ConfigMap
+metadata:
+  name: app-config

@@ -1,0 +1,98 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backstage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backstage
+  name: backstage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backstage
+  template:
+    metadata:
+      labels:
+        app: backstage
+    spec:
+      serviceAccountName: backstage
+      containers:
+      - image: ryusa/backstage:latest
+        args: ["--config", "/config/app-config.production.yaml"]
+        name: backstage
+        resources: 
+          requests:
+            cpu: "1.2"
+            memory: "500Mi"
+          limits:
+            cpu: "1.2"
+            memory: "500Mi"
+        ports:
+          - name: http
+            containerPort: 7007
+        env:
+          - name: POSTGRES_HOST
+            value: 127.0.0.1
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                key: POSTGRES_USER
+                name: backstage-secret
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: POSTGRES_PASSWORD
+                name: backstage-secret
+          - name: BUTCKET_NAME
+            valueFrom:
+              secretKeyRef:
+                key: BUTCKET_NAME
+                name: backstage-secret
+      - name: cloud-sql-proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.11.4
+        args:
+          - "--private-ip"
+          - "--structured-logs"
+          - "--auto-iam-authn"
+          - $(CLOUD_SQL)
+        securityContext:
+          runAsNonRoot: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu:    "500m"
+        env:
+          - name: CLOUD_SQL
+            valueFrom: # my-project:region:instance-name
+              secretKeyRef:
+                key: CLOUD_SQL
+                name: backstage-secret
+        volumeMounts:
+          - mountPath: /config
+            name: config
+      volumes:
+        - name: config
+          configMap:
+            name: app-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: backstage
+  name: backstage
+spec:
+  ports:
+  - port: 7007
+    protocol: TCP
+    targetPort: 7007
+  selector:
+    app: backstage
+  type: ClusterIP
