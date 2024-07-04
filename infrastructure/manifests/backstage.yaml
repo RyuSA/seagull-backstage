@@ -87,6 +87,8 @@ kind: Service
 metadata:
   labels:
     app: backstage
+  annotations:
+    beta.cloud.google.com/backend-config: '{"default": "iap-backendconfig"}'
   name: backstage
 spec:
   ports:
