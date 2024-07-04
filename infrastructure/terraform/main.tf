@@ -4,6 +4,8 @@ provider "google" {
   region  = var.region
 }
 
+data "google_project" "project" {}
+
 # GKE Autopilot Cluster
 resource "google_container_cluster" "plat_dev" {
   name             = "plat-dev"
@@ -80,4 +82,23 @@ resource "google_sql_user" "backstage_user" {
   name     = "backstage"
   instance = google_sql_database_instance.postgres_instance.name
   password = var.auth_proxy_password
+}
+
+# Artifact Registry: asia-docker.pkg.dev/PROJECT_ID/backstage
+resource "google_artifact_registry_repository" "backstage" {
+  project       = var.project_id
+  repository_id = "backstage"
+  location      = var.region
+  format        = "DOCKER"
+}
+
+# Reserved Public IP address "backstage"(Global)
+resource "google_compute_global_address" "backstage" {
+  name = "backstage"
+}
+
+resource "google_project_iam_member" "backstage_editor_workload_identity" {
+  project = var.project_id
+  role    = "roles/editor"
+  member  = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/default/sa/backstage"
 }

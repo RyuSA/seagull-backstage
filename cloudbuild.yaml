@@ -19,4 +19,4 @@ images:
   - "${_REGION}-docker.pkg.dev/$PROJECT_ID/backstage/backstage:latest"
 
 substitutions:
-  _REGION: asia
+  _REGION: asia-northeast1

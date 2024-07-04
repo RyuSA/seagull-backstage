@@ -55,6 +55,9 @@ spec:
               secretKeyRef:
                 key: BUTCKET_NAME
                 name: backstage-secret
+        volumeMounts:
+          - mountPath: /config
+            name: config
       - name: cloud-sql-proxy
         image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.11.4
         args:
@@ -74,9 +77,6 @@ spec:
               secretKeyRef:
                 key: CLOUD_SQL
                 name: backstage-secret
-        volumeMounts:
-          - mountPath: /config
-            name: config
       volumes:
         - name: config
           configMap:
@@ -96,3 +96,26 @@ spec:
   selector:
     app: backstage
   type: ClusterIP
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: backstage-cert
+spec:
+  domains:
+    - backstage.g.ryusa.app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backstage-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: backstage
+    networking.gke.io/managed-certificates: backstage-cert
+    kubernetes.io/ingress.class: "gce"
+spec:
+  defaultBackend:
+    service:
+      name: backstage
+      port:
+        number: 7007
