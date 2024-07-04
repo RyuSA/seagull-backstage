@@ -19,3 +19,13 @@ spec:
     email: ryusa@example.com
     picture: https://avatars.githubusercontent.com/u/12961775
   memberOf: [guests]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: guest
+spec:
+  type: team
+  profile:
+    displayName: Guests
+  children: []
