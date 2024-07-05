@@ -5,6 +5,7 @@ metadata:
   description: This is Platform Engineering? No it's just an IDP.
   annotations:
     backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: backstage
 spec:
   type: website
   owner: user:RyuSA
