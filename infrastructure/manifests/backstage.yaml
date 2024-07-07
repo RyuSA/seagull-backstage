@@ -1,14 +1,9 @@
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: backstage
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: backstage
+    backstage.io/kubernetes-id: backstage
   name: backstage
 spec:
   replicas: 1
@@ -19,6 +14,7 @@ spec:
     metadata:
       labels:
         app: backstage
+        backstage.io/kubernetes-id: backstage
     spec:
       serviceAccountName: backstage
       containers:
@@ -27,10 +23,10 @@ spec:
         name: backstage
         resources: 
           requests:
-            cpu: "1.2"
+            cpu: "600m"
             memory: "500Mi"
           limits:
-            cpu: "1.2"
+            cpu: "600m"
             memory: "500Mi"
         ports:
           - name: http
@@ -55,6 +51,16 @@ spec:
               secretKeyRef:
                 key: BUTCKET_NAME
                 name: backstage-secret
+          - name: PROJECT_ID
+            valueFrom:
+              secretKeyRef:
+                key: PROJECT_ID
+                name: backstage-secret
+          - name: REGION
+            valueFrom:
+              secretKeyRef:
+                key: REGION
+                name: backstage-secret
         volumeMounts:
           - mountPath: /config
             name: config
@@ -68,9 +74,12 @@ spec:
         securityContext:
           runAsNonRoot: true
         resources:
+          limits:
+            memory: "128Mi"
+            cpu:    "250m"
           requests:
-            memory: "256Mi"
-            cpu:    "500m"
+            memory: "128Mi"
+            cpu:    "250m"
         env:
           - name: CLOUD_SQL
             valueFrom: # my-project:region:instance-name
@@ -87,6 +96,7 @@ kind: Service
 metadata:
   labels:
     app: backstage
+    backstage.io/kubernetes-id: backstage
   annotations:
     beta.cloud.google.com/backend-config: '{"default": "iap-backendconfig"}'
   name: backstage

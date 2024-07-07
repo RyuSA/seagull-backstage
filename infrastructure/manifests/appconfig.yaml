@@ -38,6 +38,17 @@ data:
         type: 'googleGcs'
         googleGcs:
           bucketName: ${BUTCKET_NAME}
+          projectId: ${PROJECT_ID}
+
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'gke'
+          projectId: ${PROJECT_ID}
+          region: ${REGION}
+          skipTLSVerify: true
+          authProvider: 'googleServiceAccount'
 kind: ConfigMap
 metadata:
   name: app-config

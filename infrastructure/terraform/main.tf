@@ -34,6 +34,12 @@ resource "google_project_iam_member" "backstage_editor" {
   member  = "serviceAccount:${google_service_account.backstage.email}"
 }
 
+resource "google_project_iam_member" "backstage_container_viewer" {
+  project = var.project_id
+  role    = "roles/container.viewer"
+  member  = "serviceAccount:${google_service_account.backstage.email}"
+}
+
 data "google_compute_network" "default" {
   name = "default"
 }
@@ -101,4 +107,34 @@ resource "google_project_iam_member" "backstage_editor_workload_identity" {
   project = var.project_id
   role    = "roles/editor"
   member  = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/default/sa/backstage"
+}
+
+resource "google_project_iam_member" "backstage_container_viewer_workload_identity" {
+  project = var.project_id
+  role    = "roles/container.clusterViewer"
+  member  = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/default/sa/my-sa"
+}
+
+resource "google_service_account_iam_member" "backstage_workload_identity" {
+  service_account_id = google_service_account.backstage.id
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${var.project_id}.svc.id.goog[default/backstage]"
+}
+
+provider "kubernetes" {
+  host                   = "https://${google_container_cluster.plat_dev.endpoint}"
+  cluster_ca_certificate = base64decode(google_container_cluster.plat_dev.master_auth.0.cluster_ca_certificate)
+  token                  = data.google_client_config.default.access_token
+}
+
+data "google_client_config" "default" {}
+
+resource "kubernetes_service_account" "backstage" {
+  metadata {
+    name      = "backstage"
+    namespace = "default"
+    annotations = {
+      "iam.gke.io/gcp-service-account" = "${google_service_account.backstage.email}"
+    }
+  }
 }
