@@ -61,6 +61,16 @@ spec:
               secretKeyRef:
                 key: REGION
                 name: backstage-secret
+          - name: PROJECT_NUMBER
+            valueFrom:
+              secretKeyRef:
+                key: PROJECT_NUMBER
+                name: backstage-secret
+          - name: BACKEND_ID
+            valueFrom:
+              secretKeyRef:
+                key: BACKEND_ID
+                name: backstage-secret
         volumeMounts:
           - mountPath: /config
             name: config

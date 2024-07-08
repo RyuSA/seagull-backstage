@@ -15,8 +15,13 @@ backend:
 
 auth:
   providers:
-    guest:
-      dangerouslyAllowOutsideDevelopment: true # TODO change the provider
+    gcp-iap:
+      audience: '/projects/${PROJECT_NUMBER}/global/backendServices/${BACKEND_ID}'
+      signIn:
+        resolvers:
+          - resolver: emailMatchingUserEntityProfileEmail
+          - resolver: emailLocalPartMatchingUserEntityName
+          - resolver: emailMatchingUserEntityAnnotation
 
 catalog:
   processingInterval: { minutes: 5 }
@@ -35,3 +40,14 @@ techdocs:
     type: 'googleGcs'
     googleGcs:
       bucketName: ${BUTCKET_NAME}
+      projectId: ${PROJECT_ID}
+
+kubernetes:
+  serviceLocatorMethod:
+    type: 'multiTenant'
+  clusterLocatorMethods:
+    - type: 'gke'
+      projectId: ${PROJECT_ID}
+      region: ${REGION}
+      skipTLSVerify: true
+      authProvider: 'googleServiceAccount'
