@@ -8,6 +8,7 @@ spec:
   targets:
     - https://github.com/RyuSA/seagull-backstage/blob/main/catalog-info.yaml
     - https://github.com/RyuSA/x-ctf/blob/main/catalog-info.yaml
+    - https://github.com/RyuSA/seagull-project/blob/main/catalog-info.yaml
 ---
 apiVersion: backstage.io/v1alpha1
 kind: User
