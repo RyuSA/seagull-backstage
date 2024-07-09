@@ -6,6 +6,10 @@ metadata:
   annotations:
     backstage.io/techdocs-ref: dir:.
     backstage.io/kubernetes-id: backstage
+  links:
+    - url: https://backstage.g.ryusa.app
+      title: https://backstage.g.ryusa.app
+      icon: catalog
 spec:
   type: website
   owner: user:RyuSA
