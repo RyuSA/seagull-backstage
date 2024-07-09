@@ -17,6 +17,7 @@ data:
           password: ${POSTGRES_PASSWORD}
 
     auth:
+      environment: production
       providers:
         gcp-iap:
           audience: '/projects/${PROJECT_NUMBER}/global/backendServices/${BACKEND_ID}'
